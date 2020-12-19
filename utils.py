@@ -89,11 +89,13 @@ class Bob():
 
         s = sc * st
         #converting s to base 2
-        r_hat = decimal_to_base_array(s, 2)
+        r_hat =bin_to_decimal(decimal_to_base_array(s, 2))
+        r = bin_to_decimal(r)
+
 
         #checking if r, r_hat are equal, if so true is returned
-        return np.sum(np.abs(r-r_hat)) == 0
-        
+        return r-r_hat == 0
+
 
 class Carol():
     def __init__(self, lc, n, c):
@@ -119,7 +121,7 @@ def compute_probable_value(l, n):
     results = []
     #Compute the random number and adds the value of n
     #then it sums all the digits
-    for i in range(0, 10000):
+    for i in range(0, 5000):
         dec_random_k = bin_to_decimal(generate_random_bin_string(l))
         t = dec_random_k + n
         results.append(np.sum(decimal_to_base_array(t, 10)))
