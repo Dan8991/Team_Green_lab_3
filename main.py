@@ -1,14 +1,15 @@
-from utils import Alice, Bob, generate_random_bin_string, Carol
+from utils import Alice, Bob, generate_random_bin_string
 import numpy as np
+from carol import *
 
 lk = 10
 lc = 10
 times_accepted = 0
-
-for i in range(0, 1000):
+"""
+for i in range(0, 500):
     #Debug print to see if the machine is still Working
-    #if i%100 == 0 and i != 0:
-    #    print("Working")
+    if i%100 == 0 and i != 0:
+        print("Working")
 
     common_key = generate_random_bin_string(lk)
     alice = Alice(common_key)
@@ -25,3 +26,6 @@ for i in range(0, 1000):
 
 #print(f"Alice was accepted?: {accepted}")
 print("Times that the intruder was accepted:", times_accepted)
+"""
+
+plot_probabilities(lc, lk)
