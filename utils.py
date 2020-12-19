@@ -1,4 +1,5 @@
 import numpy as np
+from collections import Counter
 
 #generates an l bits long binary string
 def generate_random_bin_string(l):
@@ -92,6 +93,39 @@ class Bob():
 
         #checking if r, r_hat are equal, if so true is returned
         return np.sum(np.abs(r-r_hat)) == 0
+        
+
+class Carol():
+    def __init__(self, lc, n, c):
+        self.lc = lc
+        self.n = n
+        self.c = c
+
+    def task3(self):
+        #compute the decimal representation of c
+        c_dec = bin_to_decimal(self.c)
+        #sum all the decimal digits of c
+        sc = np.sum(decimal_to_base_array(c_dec, 10))
+
+        #Compute st
+        st = compute_probable_value(self.lc, self.n)
+
+        s = st*sc
+        #converting s to base 2
+        return  decimal_to_base_array(s, 2)
 
 
-
+def compute_probable_value(l, n):
+    results = []
+    #Compute the random number and adds the value of n
+    #then it sums all the digits
+    for i in range(0, 10000):
+        dec_random_k = bin_to_decimal(generate_random_bin_string(l))
+        t = dec_random_k + n
+        results.append(np.sum(decimal_to_base_array(t, 10)))
+    
+    #Create a dictionary of the computed sums and return the key
+    #with the highest value
+    final_results = dict(sorted(Counter(results).items()))
+    return max(final_results, key=final_results.get)
+    
