@@ -27,6 +27,7 @@ def decimal_to_base_array(decimal, base):
 
 
 
+
 class Alice():
 
     def __init__(self, key, ida = 1):
@@ -91,7 +92,19 @@ class Bob():
         r_hat = decimal_to_base_array(s, 2)
 
         #checking if r, r_hat are equal, if so true is returned
-        return np.sum(np.abs(r-r_hat)) == 0
+        if(r.size == r_hat.size):
+            return np.sum(np.abs(r-r_hat)) == 0
+        else:
+            return False
 
 
-
+        
+        
+        
+        
+    
+    
+    
+    
+    
+    
