@@ -3,17 +3,25 @@ import numpy as np
 
 lk = 10
 lc = 10
-common_key = generate_random_bin_string(lk)
-alice = Alice(common_key)
-bob = Bob(common_key, lc)
+times_accepted = 0
 
-ida = alice.step_1()
-c, n = bob.step_2(ida)
+for i in range(0, 1000):
+    #Debug print to see if the machine is still Working
+    #if i%100 == 0 and i != 0:
+    #    print("Working")
 
-#Intruder
-carol = Carol(lc, n, c)
-r_carol = carol.task3()
+    common_key = generate_random_bin_string(lk)
+    alice = Alice(common_key)
+    bob = Bob(common_key, lc)
 
-r = alice.step_3(c, n)
-accepted = bob.step_4(r_carol)
-print(f"Alice was accepted?: {accepted}")
+    ida = alice.step_1()
+    c, n = bob.step_2(ida)
+
+    #Intruder
+    carol = Carol(lc, n, c)
+    r_carol = carol.task3()
+    if bob.step_4(r_carol):
+        times_accepted += 1
+
+#print(f"Alice was accepted?: {accepted}")
+print("Times that the intruder was accepted:", times_accepted)
