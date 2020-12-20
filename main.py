@@ -2,7 +2,7 @@
 from utils import Alice, Bob, generate_random_bin_string
 from evil import Evil,attack_with_evil,evaluate_success_probability,plot_probablities,evaluate_complexity,plot_time
 import numpy as np
-from carol import *
+import carol
 
 print("------------ TASK 1 -----------")
 print("\n")
@@ -27,16 +27,16 @@ print("Attacking with lk=10, lc=10, n=1")
 attack_with_evil(10,10,1)
 print("\n")
 print("Attacking with lk=10, lc=10, n=37")
-attack_with_evil(10,10,1)
+attack_with_evil(10,10,37)
 print("\n")
 print("Attacking with lk=5, lc=5, n=12")
-attack_with_evil(10,10,1)
+attack_with_evil(5,5,12)
 print("\n")
 print("Attacking with lk=30, lc=20, n=20")
-attack_with_evil(10,10,1)
+attack_with_evil(30,20,20)
 print("\n")
 print("Attacking with lk=15, lc=10, n=55")
-attack_with_evil(10,10,1)
+attack_with_evil(15,10,55)
 
 
 #arr_n, arr_lk, arr_lc = evaluate_success_probability(20,20,1)
@@ -49,6 +49,6 @@ compl_var_lk,compl_var_lc,compl_var_lk_lc = evaluate_complexity()
 plot_time(compl_var_lk,compl_var_lc,compl_var_lk_lc)
 
 
+print("starting task 3")
 
-
-plot_probabilities(lc, lk)
+carol.plot_probabilities(lc, lk)

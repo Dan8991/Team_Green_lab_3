@@ -2,6 +2,7 @@ import numpy as np
 import os, sys
 import matplotlib.pyplot as plt
 import time
+from tqdm import tqdm
 
 from utils import generate_random_bin_string,Alice,Bob,bin_to_decimal,decimal_to_base_array
 
@@ -14,22 +15,17 @@ def attack_with_evil(lk,lc, round_to_collect):
     alice = Alice(common_key)
     bob = Bob(common_key, lc)
     
-    for i in range(round_to_collect):
-        ida = alice.step_1()
-        c, n = bob.step_2(ida)
-        r = alice.step_3(c, n)
-        accepted = bob.step_4(r)
+    bob.n = round_to_collect - 1
+    ida = alice.step_1()
+    c, n = bob.step_2(ida)
+    r = alice.step_3(c, n)
+    accepted = bob.step_4(r)
 
     print("Evil is collecting information about round ",n)
     evil = Evil(r, c, n)
 
     print("A and B are communicating")
-
-    for i in range(24):
-        ida = alice.step_1()
-        c, n = bob.step_2(ida)
-        r = alice.step_3(c, n)
-        accepted = bob.step_4(r)
+    bob.n += 24
 
     print("Evil is trying to be A 25 round after")
     c, n = bob.step_2(ida)
@@ -41,7 +37,7 @@ def attack_with_evil(lk,lc, round_to_collect):
 def evaluate(lk,lc,round_to_collect,tests):
     sys.stdout = open(os.devnull, 'w')
     n = 0
-    for i in range(tests):
+    for _ in range(tests):
         n += attack_with_evil(lk,lc,round_to_collect)
     sys.stdout = sys.__stdout__    
     return n/tests
@@ -96,7 +92,7 @@ def plot_probablities(probab_var_n,probab_var_lk,probab_var_lc):
 def evaluate_time(lk,lc,round_to_collect,tests):
     sys.stdout = open(os.devnull, 'w')
     mean_time = 0
-    for i in range(tests):
+    for _ in range(tests):
         start = current_milli_time()
         attack_with_evil(lk,lc,round_to_collect)
         end = current_milli_time()
@@ -110,23 +106,22 @@ def evaluate_complexity():
     print("\n")
     print("Evaluating computational complexity increasing lk (from 10 to 60)")
     compl_var_lk = np.array([])
-    for i in range (50):
-        print(i)
-        compl_var_lk = np.append(compl_var_lk,evaluate_time(i+10,10,10,20))
+    for i in tqdm(range (50)):
+        compl_var_lk = np.append(compl_var_lk, evaluate_time(i+10,10,10,20))
     
     
     print("\n")
     print("\n")
     print("Evaluating computational complexity increasing lc (from 10 to 60)")
     compl_var_lc = np.array([])
-    for i in range (50):
+    for i in tqdm(range(50)):
         compl_var_lc = np.append(compl_var_lc,evaluate_time(10,i+10,10,20))
     
     print("\n")
     print("\n")
     print("Evaluating computational complexity increasing both lk and lc (from 10 to 60)")
     compl_var_lk_lc = np.array([])
-    for i in range (50):
+    for i in tqdm(range(50)):
         compl_var_lk_lc = np.append(compl_var_lk_lc,evaluate_time(i+10,i+10,10,20))
     
     return compl_var_lk,compl_var_lc,compl_var_lk_lc
@@ -155,7 +150,12 @@ class Evil():
         #sum all the decimal digits of c
         sc = np.sum(decimal_to_base_array(c_dec, 10))
         s = bin_to_decimal(r)
-        self.st = int(s/sc)
+        #done in over to solve the case where c has all bits equal to zero
+        #in this case we get no information about s_t so we can just set it at random
+        if sc == 0:
+            self.st = 10
+        else: 
+            self.st = int(s / sc )
         
         
     def attack(self, c):
