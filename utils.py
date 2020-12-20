@@ -129,4 +129,5 @@ def get_decimal_sum_distribution(max_val):
 def ts_distribution(min_val, max_val):
     max_dist = get_decimal_sum_distribution(max_val)
     min_dist = get_decimal_sum_distribution(min_val)
+    min_dist = np.append(min_dist, np.zeros(len(max_dist)-len(min_dist)))
     return max_dist - min_dist

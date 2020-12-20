@@ -14,4 +14,6 @@ r = alice.step_3(c, n)
 accepted = bob.step_4(r)
 print(f"Alice was accepted?: {accepted}")
 
+#ts_distribution(n, n+2**lk)
+
 plot_probabilities(lc, lk)

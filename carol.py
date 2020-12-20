@@ -19,18 +19,18 @@ class Carol():
         sc = np.sum(decimal_to_base_array(c_dec, 10))
 
         #Compute st
-        st = compute_probable_value(self.lk, self.n)
+        st = np.argmax(ts_distribution(self.n, self.n + 2**self.lk))
 
         s = st*sc
         #converting s to base 2
         return  decimal_to_base_array(s, 2)
 
-
+#Brute force version to compute the most probable value of k
 def compute_probable_value(l, n):
     results = []
     #Compute the random number and adds the value of n
     #then it sums all the digits
-    for i in range(0, 1000):
+    for i in range(0, 100):
         dec_random_k = bin_to_decimal(generate_random_bin_string(l))
         t = dec_random_k + n
         results.append(np.sum(decimal_to_base_array(t, 10)))
@@ -66,7 +66,6 @@ def probability_of_success_and_complexity(lc, lk, repetitions):
         time += (end-start)
         if result:
             successful_attacks += 1
-    print("successfull attacks:", successful_attacks)
     return successful_attacks/repetitions, time/repetitions
 
 
@@ -106,7 +105,7 @@ def plot_probabilities(lc, lk):
     plt.plot(changing_lk_prob, "g", label="Varying lk")
     plt.plot(changing_lc_lk_prob, "b", label="Varying lc and lk")
     plt.xlabel("Value of lc and lk")
-    plt.ylabel("Probability")
+    plt.ylabel("Probability [%]")
     plt.legend()
     plt.show()
 
@@ -114,6 +113,6 @@ def plot_probabilities(lc, lk):
     plt.plot(changing_lk_complex, "g", label="Varying lk")
     plt.plot(changing_lc_lk_complex, "b", label="Varying lc and lk")
     plt.xlabel("Value of lc and lk")
-    plt.ylabel("Complexity in millisecond")
+    plt.ylabel("Complexity [ms]")
     plt.legend()
     plt.show()
