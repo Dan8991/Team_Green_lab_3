@@ -2,6 +2,7 @@
 from utils import Alice, Bob, generate_random_bin_string
 from evil import Evil,attack_with_evil,evaluate_success_probability,plot_probablities,evaluate_complexity,plot_time
 import numpy as np
+from carol import *
 
 print("------------ TASK 1 -----------")
 print("\n")
@@ -48,3 +49,6 @@ compl_var_lk,compl_var_lc,compl_var_lk_lc = evaluate_complexity()
 plot_time(compl_var_lk,compl_var_lc,compl_var_lk_lc)
 
 
+
+
+plot_probabilities(lc, lk)
