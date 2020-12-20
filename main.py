@@ -1,5 +1,6 @@
 from utils import Alice, Bob, generate_random_bin_string
 import numpy as np
+from carol import *
 
 lk = 10
 lc = 10
@@ -12,3 +13,6 @@ c, n = bob.step_2(ida)
 r = alice.step_3(c, n)
 accepted = bob.step_4(r)
 print(f"Alice was accepted?: {accepted}")
+
+
+plot_probabilities(lc, lk)
