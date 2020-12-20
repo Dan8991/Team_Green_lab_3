@@ -20,11 +20,14 @@ for example
 '''
 def decimal_to_base_array(decimal, base):
     arr = []
+    if decimal == 0:
+        return np.array([0])
     while decimal > 0:
         arr.append(decimal % base)
         decimal = decimal // base
 
     return np.flip(arr)
+
 
 
 

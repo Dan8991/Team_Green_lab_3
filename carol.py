@@ -3,6 +3,7 @@ from collections import Counter
 from utils import *
 import time
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
@@ -30,7 +31,7 @@ def compute_probable_value(l, n):
     results = []
     #Compute the random number and adds the value of n
     #then it sums all the digits
-    for i in range(0, 100):
+    for _ in range(0, 100):
         dec_random_k = bin_to_decimal(generate_random_bin_string(l))
         t = dec_random_k + n
         results.append(np.sum(decimal_to_base_array(t, 10)))
@@ -59,7 +60,7 @@ def attack_with_carol(lc, lk):
 def probability_of_success_and_complexity(lc, lk, repetitions):
     successful_attacks = 0
     time = 0
-    for i in range(0, repetitions):
+    for _ in range(0, repetitions):
         start = current_milli_time()
         result = attack_with_carol(lc, lk)
         end = current_milli_time()
@@ -71,7 +72,7 @@ def probability_of_success_and_complexity(lc, lk, repetitions):
 
 def complexity(lc, lk, repetitions):
     time = 0
-    for i in range(0, repetitions):
+    for _ in range(0, repetitions):
         start = current_milli_time()
         result = attack_with_carol(lc, lk)
         end = current_milli_time()
@@ -82,21 +83,21 @@ def complexity(lc, lk, repetitions):
 def plot_probabilities(lc, lk):
     changing_lc_prob = []
     changing_lc_complex = []
-    for i in range(0, 10, 2):
+    for i in tqdm(range(0, 10, 2)):
         prob, comp = probability_of_success_and_complexity(lc+i, lk, 500)
         changing_lc_prob.append(prob*100)
         changing_lc_complex.append(comp)
 
     changing_lk_prob = []
     changing_lk_complex = []
-    for i in range(0, 10, 2):
+    for i in tqdm(range(0, 10, 2)):
         prob, comp = probability_of_success_and_complexity(lc, lk+i, 500)
         changing_lk_prob.append(prob*100)
         changing_lk_complex.append(comp)
 
     changing_lc_lk_prob = []
     changing_lc_lk_complex = []
-    for i in range(0, 10, 2):
+    for i in tqdm(range(0, 10, 2)):
         prob, comp = probability_of_success_and_complexity(lc+i, lk+i, 500)
         changing_lc_lk_prob.append(prob*100)
         changing_lc_lk_complex.append(comp)
