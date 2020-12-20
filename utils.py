@@ -1,5 +1,10 @@
 import numpy as np
 from collections import Counter
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+import time
+
+current_milli_time = lambda: int(round(time.time() * 1000))
 
 #generates an l bits long binary string
 def generate_random_bin_string(l):
@@ -27,7 +32,6 @@ def decimal_to_base_array(decimal, base):
         decimal = decimal // base
 
     return np.flip(arr)
-
 
 
 
@@ -127,6 +131,7 @@ def get_decimal_sum_distribution(max_val):
 
     return vals
 
+
 #use this function to compute the distribution
 #min_val is the counter n, max_val is n + 2**lk i.e the maximum value of n + k
 def ts_distribution(min_val, max_val):
@@ -134,3 +139,38 @@ def ts_distribution(min_val, max_val):
     min_dist = get_decimal_sum_distribution(min_val)
     min_dist = np.append(min_dist, np.zeros(len(max_dist)-len(min_dist)))
     return max_dist - min_dist
+
+def test_standard_protocol(lk, lc, n_tests = 1000):
+
+    times = []
+    for _ in range(n_tests):
+        before = current_milli_time()
+        common_key = generate_random_bin_string(lk)
+        alice = Alice(common_key)
+        bob = Bob(common_key, lc)
+
+        ida = alice.step_1()
+        c, n = bob.step_2(ida)
+        r = alice.step_3(c, n)
+        accepted = bob.step_4(r)
+        after = current_milli_time()
+        times.append(after - before)
+    return np.mean(times)
+
+
+def plot_time_for_standard_protocol(lk):
+
+    lcs = [10, 20, 30, 40, 50]
+    complexity = {lc:[] for lc in lcs}
+
+    plt.figure()
+    for lc in tqdm(lcs):
+        for i in range(0, 50, 2):
+            complexity[lc].append(test_standard_protocol(lk + i, lc))
+        plt.plot(np.arange(10, 60, 2), complexity[lc], label = f"lc = {lc}")
+
+    plt.xlabel('lk')
+    plt.legend()
+    plt.ylabel("t(ms)")
+    plt.savefig("task_1.png")
+

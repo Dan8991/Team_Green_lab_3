@@ -80,40 +80,26 @@ def complexity(lc, lk, repetitions):
     return time/repetitions
 
 
-def plot_probabilities(lc, lk):
-    changing_lc_prob = []
-    changing_lc_complex = []
-    for i in tqdm(range(0, 10, 2)):
-        prob, comp = probability_of_success_and_complexity(lc+i, lk, 500)
-        changing_lc_prob.append(prob*100)
-        changing_lc_complex.append(comp)
+def plot_probabilities(lk):
+    lcs = [10, 20, 30, 40, 50]
+    probs = {lc: [] for lc in lcs}
+    complexities = {lc:[] for lc in lcs}
+    repetitions = 10**3
+    fig, axs = plt.subplots(1, 2, figsize = (12, 4))
+    for lc in tqdm(lcs):
+        for i in range(0, 50, 2):
+            prob, comp = probability_of_success_and_complexity(lc+i, lk, repetitions)
+            probs[lc].append(prob*100)
+            complexities[lc].append(comp)
+        axs[0].plot(np.arange(10, 60, 2), probs[lc], label=f"lc = {lc}")
+        axs[0].set_xlabel("lk")
+        axs[0].set_ylabel("Success Probability [%]")
+        axs[0].legend()
+        axs[0].set_ylim([0, 20])
 
-    changing_lk_prob = []
-    changing_lk_complex = []
-    for i in tqdm(range(0, 10, 2)):
-        prob, comp = probability_of_success_and_complexity(lc, lk+i, 500)
-        changing_lk_prob.append(prob*100)
-        changing_lk_complex.append(comp)
+        axs[1].plot(np.arange(10, 60, 2), complexities[lc], label=f"lc = {lc}")
+        axs[1].set_xlabel("lk")
+        axs[1].set_ylabel("Complexity [ms]")
+        axs[1].legend()
 
-    changing_lc_lk_prob = []
-    changing_lc_lk_complex = []
-    for i in tqdm(range(0, 10, 2)):
-        prob, comp = probability_of_success_and_complexity(lc+i, lk+i, 500)
-        changing_lc_lk_prob.append(prob*100)
-        changing_lc_lk_complex.append(comp)
-    
-    plt.plot(changing_lc_prob, "r", label="Varying lc")
-    plt.plot(changing_lk_prob, "g", label="Varying lk")
-    plt.plot(changing_lc_lk_prob, "b", label="Varying lc and lk")
-    plt.xlabel("Value of lc and lk")
-    plt.ylabel("Probability [%]")
-    plt.legend()
-    plt.show()
-
-    plt.plot(changing_lc_complex, "r", label="Varying lc")
-    plt.plot(changing_lk_complex, "g", label="Varying lk")
-    plt.plot(changing_lc_lk_complex, "b", label="Varying lc and lk")
-    plt.xlabel("Value of lc and lk")
-    plt.ylabel("Complexity [ms]")
-    plt.legend()
-    plt.show()
+    plt.savefig("task_3.png")

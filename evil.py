@@ -3,6 +3,7 @@ import os, sys
 import matplotlib.pyplot as plt
 import time
 from tqdm import tqdm
+import random
 
 from utils import generate_random_bin_string,Alice,Bob,bin_to_decimal,decimal_to_base_array
 
@@ -34,7 +35,7 @@ def attack_with_evil(lk,lc, round_to_collect):
     print(f"Alice was accepted?: {accepted}")
     return accepted
 
-def evaluate(lk,lc,round_to_collect,tests):
+def evaluate(lk, lc, round_to_collect, tests = 10**3):
     sys.stdout = open(os.devnull, 'w')
     n = 0
     for _ in range(tests):
@@ -42,54 +43,33 @@ def evaluate(lk,lc,round_to_collect,tests):
     sys.stdout = sys.__stdout__    
     return n/tests
     
-def evaluate_success_probability(lk,lc,round_to_collect):
+def plot_probablities_and_complexity(lk):
     
-    print("\n")
-    print("\n")
-    print("Evaluating success probability varying n")
-    probab_var_n = np.array([])
-    for i in range(round_to_collect,round_to_collect+100,5):
-        probab = evaluate(lk,lc,i,100)
-        print("Success probability: ", probab)
-        probab_var_n = np.append(probab_var_n,probab)
-
-    print("\n")
-    print("\n")
-    print("Evaluating success probability varying lk")
-    probab_var_lk = np.array([])
-    for i in range(lk,lk+100,5):
-        probab = evaluate(i,lc,round_to_collect,100)
-        print("Success probability: ", probab)
-        probab_var_lk = np.append(probab_var_lk,probab)
-        
-    print("\n")
-    print("\n")
-    print("Evaluating success probability varying lc")
-    probab_var_lc = np.array([])
-    for i in range(lc,lc+100,5):
-        probab = evaluate(lk,i,round_to_collect,100)
-        print("Success probability: ", probab)
-        probab_var_lc = np.append(probab_var_lc,probab)
-    print(probab_var_n)    
-    return probab_var_n,probab_var_lk,probab_var_lc
-
-def plot_probablities(probab_var_n,probab_var_lk,probab_var_lc):
+    lcs = [10, 20, 30, 40, 50]
+    probs = {lc:[] for lc in lcs}
+    complexity = {lc: [] for lc in lcs}
+    fig, axs = plt.subplots(1, 2, figsize=(12, 4))
     
-    print(probab_var_n)
-    plt.plot(probab_var_n)
-    plt.ylabel('varying n')
-    plt.show()    
-    
-    plt.plot(probab_var_lk)
-    plt.ylabel('varying lk')
-    plt.show() 
- 
-    plt.plot(probab_var_lc)
-    plt.ylabel('varying lc')
-    plt.show()
+    for lc in tqdm(lcs):
+        for i in range(lk, lk + 40, 2):
+            #choosing a random round
+            probab = evaluate(lk,lc,random.randint(0, 1000))
+            probs[lc].append(probab)
+            complexity[lc].append(evaluate_time(lk + i, lc, random.randint(0, 1000)))
 
+        axs[0].plot(np.arange(10, 50, 2), probs[lc], label=f"lc = {lc}")
+        axs[0].set_xlabel("lk")
+        axs[0].set_ylabel("Success Probability [%]")
+        axs[0].legend()
+        axs[0].set_ylim([0, 1])
 
-def evaluate_time(lk,lc,round_to_collect,tests):
+        axs[1].plot(np.arange(10, 50, 2), complexity[lc], label=f"lc = {lc}")
+        axs[1].set_xlabel("lk")
+        axs[1].set_ylabel("Complexity [ms]")
+        axs[1].legend()
+    plt.savefig("task2.png")
+
+def evaluate_time(lk,lc,round_to_collect,tests=10**3):
     sys.stdout = open(os.devnull, 'w')
     mean_time = 0
     for _ in range(tests):
@@ -100,47 +80,6 @@ def evaluate_time(lk,lc,round_to_collect,tests):
     sys.stdout = sys.__stdout__    
     return mean_time/tests
     
-def evaluate_complexity():
-    
-    print("\n")
-    print("\n")
-    print("Evaluating computational complexity increasing lk (from 10 to 60)")
-    compl_var_lk = np.array([])
-    for i in tqdm(range (50)):
-        compl_var_lk = np.append(compl_var_lk, evaluate_time(i+10,10,10,20))
-    
-    
-    print("\n")
-    print("\n")
-    print("Evaluating computational complexity increasing lc (from 10 to 60)")
-    compl_var_lc = np.array([])
-    for i in tqdm(range(50)):
-        compl_var_lc = np.append(compl_var_lc,evaluate_time(10,i+10,10,20))
-    
-    print("\n")
-    print("\n")
-    print("Evaluating computational complexity increasing both lk and lc (from 10 to 60)")
-    compl_var_lk_lc = np.array([])
-    for i in tqdm(range(50)):
-        compl_var_lk_lc = np.append(compl_var_lk_lc,evaluate_time(i+10,i+10,10,20))
-    
-    return compl_var_lk,compl_var_lc,compl_var_lk_lc
-
-
-def plot_time(compl_var_lk,compl_var_lc,compl_var_lk_lc):
-    
-    plt.plot(compl_var_lk)
-    plt.ylabel('varying lk')
-    plt.show()    
-    
-    plt.plot(compl_var_lc)
-    plt.ylabel('varying lc')
-    plt.show() 
- 
-    plt.plot(compl_var_lk_lc)
-    plt.ylabel('varying both lk and lc')
-    plt.show()
-
 class Evil():
     
     def __init__(self,r, c, n):
