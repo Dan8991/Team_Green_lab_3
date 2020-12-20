@@ -84,33 +84,36 @@ def plot_probabilities(lc, lk):
     changing_lc_prob = []
     changing_lc_complex = []
     for i in range(0, 10, 2):
-        print("times")
         prob, comp = probability_of_success_and_complexity(lc+i, lk, 500)
-        changing_lc_prob.append(prob)
+        changing_lc_prob.append(prob*100)
         changing_lc_complex.append(comp)
 
     changing_lk_prob = []
     changing_lk_complex = []
     for i in range(0, 10, 2):
-        print("times")
         prob, comp = probability_of_success_and_complexity(lc, lk+i, 500)
-        changing_lk_prob.append(prob)
+        changing_lk_prob.append(prob*100)
         changing_lk_complex.append(comp)
 
     changing_lc_lk_prob = []
     changing_lc_lk_complex = []
     for i in range(0, 10, 2):
-        print("times")
         prob, comp = probability_of_success_and_complexity(lc+i, lk+i, 500)
-        changing_lc_lk_prob.append(prob)
+        changing_lc_lk_prob.append(prob*100)
         changing_lc_lk_complex.append(comp)
     
     plt.plot(changing_lc_prob, "r", label="Varying lc")
     plt.plot(changing_lk_prob, "g", label="Varying lk")
     plt.plot(changing_lc_lk_prob, "b", label="Varying lc and lk")
+    plt.xlabel("Value of lc and lk")
+    plt.ylabel("Probability")
+    plt.legend()
     plt.show()
 
     plt.plot(changing_lc_complex, "r", label="Varying lc")
     plt.plot(changing_lk_complex, "g", label="Varying lk")
     plt.plot(changing_lc_lk_complex, "b", label="Varying lc and lk")
+    plt.xlabel("Value of lc and lk")
+    plt.ylabel("Complexity in millisecond")
+    plt.legend()
     plt.show()
