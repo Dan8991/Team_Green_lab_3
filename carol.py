@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 current_milli_time = lambda: int(round(time.time() * 1000))
 
 class Carol():
-    def __init__(self, lc, n, c):
-        self.lc = lc
+    def __init__(self, lk, n, c):
+        self.lk = lk
         self.n = n
         self.c = c
 
@@ -19,7 +19,7 @@ class Carol():
         sc = np.sum(decimal_to_base_array(c_dec, 10))
 
         #Compute st
-        st = compute_probable_value(self.lc, self.n)
+        st = compute_probable_value(self.lk, self.n)
 
         s = st*sc
         #converting s to base 2
@@ -50,7 +50,7 @@ def attack_with_carol(lc, lk):
     c, n = bob.step_2(ida)
 
     #Intruder
-    carol = Carol(lc, n, c)
+    carol = Carol(lk, n, c)
     r_carol = carol.task3()
 
     return bob.step_4(r_carol)

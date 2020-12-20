@@ -95,3 +95,38 @@ class Bob():
 
         #checking if r, r_hat are equal, if so true is returned
         return r-r_hat == 0
+
+def get_decimal_sum_distribution(max_val):
+
+
+    decomposition = decimal_to_base_array(max_val, 10)
+    exp = len(decomposition) - 1
+    vals = np.array([0 for _ in range((exp + 1)* 9 + 1)])
+    bases = [[] for _ in range(exp + 2)]
+    vals[0] = 1
+
+    for i in range(1, exp + 2):
+        end = 9 * (i - 1) + 1
+        base = np.copy(vals[:end])
+        bases[i - 1] = np.array(base)
+        if i < exp + 1:
+            limit = 10
+        else:
+            limit = decomposition[0]
+        for j in range(1, limit):
+            vals[j:(j + end)] += base
+
+    cum_sum = 0
+    for i in range(exp):
+        cum_sum += decomposition[i]
+        for j in range(decomposition[i + 1]):
+            vals[(cum_sum + j):(cum_sum + j + len(bases[exp - i - 1]))] += bases[exp - i - 1]
+
+    return vals
+
+#use this function to compute the distribution
+#min_val is the counter n, max_val is n + 2**lk i.e the maximum value of n + k
+def ts_distribution(min_val, max_val):
+    max_dist = get_decimal_sum_distribution(max_val)
+    min_dist = get_decimal_sum_distribution(min_val)
+    return max_dist - min_dist
