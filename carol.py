@@ -87,17 +87,18 @@ def plot_probabilities(lk):
     repetitions = 10**3
     fig, axs = plt.subplots(1, 2, figsize = (12, 4))
     for lc in tqdm(lcs):
-        for i in range(0, 50, 2):
-            prob, comp = probability_of_success_and_complexity(lc+i, lk, repetitions)
+        for i in range(0, 250, 10):
+            prob, comp = probability_of_success_and_complexity(lc, lk + i, repetitions)
             probs[lc].append(prob*100)
             complexities[lc].append(comp)
-        axs[0].plot(np.arange(10, 60, 2), probs[lc], label=f"lc = {lc}")
+        axs[0].plot(np.arange(10, 260, 10), probs[lc], label=f"lc = {lc}")
         axs[0].set_xlabel("lk")
         axs[0].set_ylabel("Success Probability [%]")
         axs[0].legend()
-        axs[0].set_ylim([0, 20])
+        axs[0].set_yscale('log')
+        # axs[0].set_ylim([0, 20])
 
-        axs[1].plot(np.arange(10, 60, 2), complexities[lc], label=f"lc = {lc}")
+        axs[1].plot(np.arange(10, 260, 10), complexities[lc], label=f"lc = {lc}")
         axs[1].set_xlabel("lk")
         axs[1].set_ylabel("Complexity [ms]")
         axs[1].legend()
