@@ -135,10 +135,13 @@ def get_decimal_sum_distribution(max_val):
 #use this function to compute the distribution
 #min_val is the counter n, max_val is n + 2**lk i.e the maximum value of n + k
 def ts_distribution(min_val, max_val):
-    max_dist = get_decimal_sum_distribution(max_val)
-    min_dist = get_decimal_sum_distribution(min_val)
-    min_dist = np.append(min_dist, np.zeros(len(max_dist)-len(min_dist)))
-    return max_dist - min_dist
+    if np.floor(np.log2(float(max_val))) > 68:
+        return np.round(9 * np.log10(float(max_val)) / 2), False
+    else:
+        max_dist = get_decimal_sum_distribution(max_val)
+        min_dist = get_decimal_sum_distribution(min_val)
+        min_dist = np.append(min_dist, np.zeros(len(max_dist)-len(min_dist)))
+        return max_dist - min_dist, True
 
 def test_standard_protocol(lk, lc, n_tests = 1000):
 
@@ -165,9 +168,9 @@ def plot_time_for_standard_protocol(lk):
 
     plt.figure()
     for lc in tqdm(lcs):
-        for i in range(0, 50, 2):
+        for i in range(0, 250, 10):
             complexity[lc].append(test_standard_protocol(lk + i, lc))
-        plt.plot(np.arange(10, 60, 2), complexity[lc], label = f"lc = {lc}")
+        plt.plot(np.arange(10, 260, 10), complexity[lc], label = f"lc = {lc}")
 
     plt.xlabel('lk')
     plt.legend()

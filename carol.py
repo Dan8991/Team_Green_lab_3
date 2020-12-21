@@ -20,7 +20,11 @@ class Carol():
         sc = np.sum(decimal_to_base_array(c_dec, 10))
 
         #Compute st
-        st = np.argmax(ts_distribution(self.n, self.n + 2**self.lk))
+        dist, used_alg = ts_distribution(self.n, self.n + 2**self.lk)
+        if used_alg:
+            st = np.argmax(dist)
+        else:
+            st = dist
 
         s = st*sc
         #converting s to base 2
@@ -85,8 +89,9 @@ def plot_probabilities(lk):
     probs = {lc: [] for lc in lcs}
     complexities = {lc:[] for lc in lcs}
     repetitions = 10**3
-    fig, axs = plt.subplots(1, 2, figsize = (12, 4))
-    for lc in tqdm(lcs):
+    fig, axs = plt.subplots(1, 2, figsize = (15, 5))
+    colors = ["yellow", "orange", "red", "green", "blue"]
+    for c, lc in tqdm(enumerate(lcs)):
         for i in range(0, 250, 10):
             prob, comp = probability_of_success_and_complexity(lc, lk + i, repetitions)
             probs[lc].append(prob*100)
@@ -95,12 +100,24 @@ def plot_probabilities(lk):
         axs[0].set_xlabel("lk")
         axs[0].set_ylabel("Success Probability [%]")
         axs[0].legend()
-        axs[0].set_yscale('log')
-        # axs[0].set_ylim([0, 20])
+        axs[0].set_ylim([0, 15])
 
-        axs[1].plot(np.arange(10, 260, 10), complexities[lc], label=f"lc = {lc}")
+        axs[1].plot(
+                np.arange(10, 65, 10),
+                complexities[lc][:6],
+                c=colors[c],
+                label=f"lc = {lc} with alg"
+        )
+        axs[1].plot(
+                np.arange(70, 260, 10),
+                complexities[lc][6:],
+                c=colors[c],
+                label=f"lc = {lc} with approx",
+                linestyle="--"
+        )
+        
         axs[1].set_xlabel("lk")
-        axs[1].set_ylabel("Complexity [ms]")
+        axs[1].set_ylabel("Computational Complexity [ms]")
         axs[1].legend()
 
     plt.savefig("task_3.png")

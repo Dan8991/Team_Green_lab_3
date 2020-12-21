@@ -9,6 +9,15 @@ from utils import generate_random_bin_string,Alice,Bob,bin_to_decimal,decimal_to
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
+def find_best_value(tests = 10**5):
+    print("searching the best value to add to s_{t,n-25}")
+    difference = []
+    for _ in tqdm(range(tests)):
+        rand_num = random.randint(0, 10**15)
+        sum_before = np.sum(decimal_to_base_array(rand_num, 10))
+        sum_after = np.sum(decimal_to_base_array(rand_num + 25, 10))
+        difference.append(sum_after - sum_before)
+    return difference
 
 def attack_with_evil(lk,lc, round_to_collect):
 
@@ -35,7 +44,7 @@ def attack_with_evil(lk,lc, round_to_collect):
     print(f"Alice was accepted?: {accepted}")
     return accepted
 
-def evaluate(lk, lc, round_to_collect, tests = 10**3):
+def evaluate(lk, lc, round_to_collect, tests = 1000):
     sys.stdout = open(os.devnull, 'w')
     n = 0
     for _ in range(tests):
@@ -49,27 +58,38 @@ def plot_probablities_and_complexity(lk):
     probs = {lc:[] for lc in lcs}
     complexity = {lc: [] for lc in lcs}
     fig, axs = plt.subplots(1, 2, figsize=(12, 4))
+    colors = ["yellow", "orange", "red", "green", "blue"]
     
-    for lc in tqdm(lcs):
-        for i in range(lk, lk + 40, 2):
+    for c, lc in tqdm(enumerate(lcs)):
+        for i in range(lk, lk + 250, 10):
             #choosing a random round
             probab = evaluate(lk,lc,random.randint(0, 1000))
             probs[lc].append(probab)
             complexity[lc].append(evaluate_time(lk + i, lc, random.randint(0, 1000)))
 
-        axs[0].plot(np.arange(10, 50, 2), probs[lc], label=f"lc = {lc}")
+        axs[0].plot(
+                np.arange(10, 260, 10),
+                probs[lc],
+                c=colors[c],
+                label=f"lc = {lc}"
+        )
         axs[0].set_xlabel("lk")
-        axs[0].set_ylabel("Success Probability [%]")
+        axs[0].set_ylabel("Success Probability")
         axs[0].legend()
-        axs[0].set_ylim([0, 1])
+        axs[0].set_ylim([0.3, 0.6])
 
-        axs[1].plot(np.arange(10, 50, 2), complexity[lc], label=f"lc = {lc}")
+        axs[1].plot(
+                np.arange(10, 260, 10),
+                complexity[lc],
+                c = colors[c],
+                label=f"lc = {lc}"
+        )
         axs[1].set_xlabel("lk")
-        axs[1].set_ylabel("Complexity [ms]")
+        axs[1].set_ylabel("Computational Complexity [ms]")
         axs[1].legend()
     plt.savefig("task2.png")
 
-def evaluate_time(lk,lc,round_to_collect,tests=10**3):
+def evaluate_time(lk,lc,round_to_collect,tests=1000):
     sys.stdout = open(os.devnull, 'w')
     mean_time = 0
     for _ in range(tests):
@@ -102,8 +122,12 @@ class Evil():
         c_dec = bin_to_decimal(c)
         #sum all the decimal digits of c
         sc = np.sum(decimal_to_base_array(c_dec, 10))
-        # t potrebbe essere aumentato di 7 (2+5)
-        s = (self.st+7) * sc
+        #since if st<2 than subtracting 2 makes no sense in this case we add 7
+        if self.st < 2:
+            s = (self.st + 7) * sc
+        else:
+            s = (self.st - 2) * sc
+
         r = decimal_to_base_array(s, 2)
         return r
         

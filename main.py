@@ -1,6 +1,6 @@
 
-from utils import Alice, Bob, generate_random_bin_string, plot_time_for_standard_protocol
-from evil import Evil,attack_with_evil, plot_probablities_and_complexity
+from utils import Alice, Bob, generate_random_bin_string, plot_time_for_standard_protocol, ts_distribution
+from evil import Evil,attack_with_evil, plot_probablities_and_complexity, find_best_value
 import numpy as np
 import carol
 import matplotlib.pyplot as plt
@@ -23,6 +23,12 @@ print(f"Alice was accepted?: {accepted}")
 print("Computing complexity for the standard protocol")
 plot_time_for_standard_protocol(10)
 
+print("starting task 2")
+possible_values = find_best_value()
+uniques, counts = np.unique(possible_values, return_counts=True)
+amax = np.argmax(counts)
+print(f"best value: {possible_values[amax]}, probability: {counts[amax]/np.sum(counts)}")
+print(f"And their probability(percentage since ints are easier to visualize):", np.array(100 * counts/np.sum(counts), dtype=int))
 print("\n")
 print("\n")
 
